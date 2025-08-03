@@ -585,7 +585,7 @@
         <div class="progress-fill" id="progressFill"></div>
       </div>
       <div class="question-area" id="questionArea">
-        <div class="question-type" id="questionType">�🇧 영어 → 한국어</div>
+        <div class="question-type" id="questionType">🇬🇧 영어 → 한국어</div>
         <div style="display:flex; align-items:center; justify-content:center;">
           <div class="question-word" id="questionWord">단어</div>
           <button class="pronounce-btn" title="발음 듣기" id="pronounceBtn">🔊</button>
@@ -607,11 +607,10 @@
     </div>
   </div>
   <script>
-    // API URL 설정
-    const apiKey = "";
-    const GEMINI_TRANSLATION_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-    const GEMINI_IMAGE_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${apiKey}`;
-    const GEMINI_TTS_API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`;
+    // ** 변경된 API URL 설정 (프록시 서버 사용) **
+    // TODO: 아래 YOUR_WORKER_URL 부분을 실제 Cloudflare Worker 주소로 변경해주세요.
+    const WORKER_URL = 'https://wordquiz.dfkimni.workers.dev/';
+    const PROXY_URL = `${WORKER_URL}/api`;
 
     // API 호출을 위한 재시도 로직
     async function fetchWithRetry(url, options, maxRetries = 3) {
@@ -753,7 +752,7 @@
         }
       };
       try {
-        const response = await fetchWithRetry(GEMINI_TRANSLATION_API_URL, {
+        const response = await fetchWithRetry(`${PROXY_URL}/translate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -933,7 +932,7 @@
           },
           parameters: { "sampleCount": 1 }
         };
-        const response = await fetchWithRetry(GEMINI_IMAGE_API_URL, {
+        const response = await fetchWithRetry(`${PROXY_URL}/image`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -973,7 +972,7 @@
           },
           model: "gemini-2.5-flash-preview-tts"
         };
-        const response = await fetchWithRetry(GEMINI_TTS_API_URL, {
+        const response = await fetchWithRetry(`${PROXY_URL}/tts`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
@@ -1097,4 +1096,3 @@
   </script>
 </body>
 </html>
-�
